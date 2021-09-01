@@ -1,0 +1,11 @@
+name: diamondmoney
+version: 1
+main: me.anonymusdennis.diamondmoney.main
+api-version: 1.17
+load: POSTWORLD
+depend: [Essentials]
+commands:
+  auszahlen:
+    description: sammle das angesammelte geld ein
+  money:
+    description: lol
