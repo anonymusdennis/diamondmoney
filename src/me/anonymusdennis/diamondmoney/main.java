@@ -84,49 +84,7 @@ public class main extends JavaPlugin {
 
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         Player player = (Player) sender;
-        if (cmd.getName().equalsIgnoreCase("test")) {
-            player.sendMessage(ChatColor.AQUA + "Hello World!");
-//ChatColor.AQUA well make the Hello World! Have Aqua In it.
-        }
-        if (cmd.getName().equalsIgnoreCase("addmoney")) {
-            UUID uid = Bukkit.getServer().getPlayer(args[0]).getUniqueId();
-            try {
-                Economy.add(uid, BigDecimal.valueOf(Long.parseLong(args[1])));
-            } catch (NoLoanPermittedException noLoanPermittedException) {
-                noLoanPermittedException.printStackTrace();
-            } catch (UserDoesNotExistException e) {
-                e.printStackTrace();
-            } catch (MaxMoneyException e) {
-                e.printStackTrace();
-            }
 
-        }
-        if (cmd.getName().equalsIgnoreCase("removemoney")) {
-            UUID uid = Bukkit.getServer().getPlayer(args[0]).getUniqueId();
-            try {
-                Economy.subtract(uid, BigDecimal.valueOf(Long.parseLong(args[2])));
-            } catch (NoLoanPermittedException noLoanPermittedException) {
-                noLoanPermittedException.printStackTrace();
-            } catch (UserDoesNotExistException e) {
-                e.printStackTrace();
-            } catch (MaxMoneyException e) {
-                e.printStackTrace();
-            }
-
-        }
-        if (cmd.getName().equalsIgnoreCase("setmoney")) {
-            UUID uid = Bukkit.getServer().getPlayer(args[0]).getUniqueId();
-            try {
-                Economy.setMoney(uid, BigDecimal.valueOf(Long.parseLong(args[1])));
-            } catch (NoLoanPermittedException noLoanPermittedException) {
-                noLoanPermittedException.printStackTrace();
-            } catch (UserDoesNotExistException e) {
-                e.printStackTrace();
-            } catch (MaxMoneyException e) {
-                e.printStackTrace();
-            }
-
-        }
         if (cmd.getName().equalsIgnoreCase("auszahlen")) {
             config.setup();
             UUID uid = player.getUniqueId();
