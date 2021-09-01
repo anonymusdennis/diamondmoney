@@ -1,19 +1,10 @@
 package me.anonymusdennis.diamondmoney;
 
-import com.earth2me.essentials.api.Economy;
-import com.earth2me.essentials.api.UserDoesNotExistException;
-import com.earth2me.essentials.economy.EconomyLayers;
 import net.ess3.api.events.UserBalanceUpdateEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Server;
-import org.bukkit.World;
-import org.bukkit.craftbukkit.libs.org.apache.commons.lang3.ObjectUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -63,15 +54,16 @@ public class controlloop {
                 }
             }
         }
-
         if(amount < 0) {
 
-            amount = -amount;
+            amount = amount * -1;
             if(toInventory) {
             for (int slot = 0; slot < size; slot++) {
 
                 ItemStack is = inventory.getItem(slot);
                 if (is == null) {
+                    if(inventory.firstEmpty() == -1)
+                        continue;
                     if (amount >= 64) {
 
                         is = new ItemStack(Material.DIAMOND, 64);
@@ -83,7 +75,7 @@ public class controlloop {
                         amount = 0;
                     }
 
-                } else if (is.getType().equals(type) && is.getAmount() < 64) {
+                } else if (is.getType().equals(Material.DIAMOND) && is.getAmount() < 64) {
                     if (amount >= 64 - is.getAmount()) {
                         amount -= 64 - is.getAmount();
                         is.setAmount(64);

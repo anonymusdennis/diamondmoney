@@ -11,12 +11,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public class Moneyhook {
-    public Moneyhook() {
-
-    }
 
     public void onInventorChanges(Inventory e, ItemStack itemStack, HumanEntity player) {
         int amount = 0;

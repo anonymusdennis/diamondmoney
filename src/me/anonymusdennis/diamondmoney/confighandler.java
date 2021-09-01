@@ -6,10 +6,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class confighandler {
     private main plugin = main.instance;
@@ -43,8 +39,6 @@ public class confighandler {
         } catch (IOException e) {
             Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.RED + "Could not save the players.yml file");
         }
-    }
-    public void importPlayerlist() {
     }
     public static void savePlayerlist() {
 
