@@ -24,6 +24,7 @@ public class main extends JavaPlugin {
     private static File f;
     public static controlloop task;
     public static boolean recentmoneychangebyplugin = false;
+    public Material currency;
 
     public void onEnable() {
         saveDefaultConfig();
@@ -39,14 +40,24 @@ public class main extends JavaPlugin {
                 e.printStackTrace();
             }
         }
-        MyPluginListener pl = new MyPluginListener(this);
-        getLogger().info("Enabled! All");
-        Bukkit.getPluginManager().registerEvents(pl, this);
+
         instance = this;
         task = new controlloop();
         moneyhook = new Moneyhook();
         config = new confighandler();
         config.setup();
+        String curr = config.configfilecfg.getString("currencyitem");
+        if(curr == null || curr.isEmpty())
+        {
+            curr = "DIAMOND";
+            config.configfilecfg.set("currencyitem", curr);
+        }
+        try {
+            config.configfilecfg.save(config.configfile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        currency = Material.getMaterial(curr);
         BukkitTask task = new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach(player -> {
@@ -54,6 +65,9 @@ public class main extends JavaPlugin {
                 });
             }
         }.runTaskTimer(this,0,5);
+        MyPluginListener pl = new MyPluginListener(this);
+        getLogger().info("Enabled! All");
+        Bukkit.getPluginManager().registerEvents(pl, this);
         Bukkit.getOnlinePlayers().forEach(player -> {
             int money = main.moneyhook.getMoney(player);
             playerlist.put(player.getUniqueId(), BigDecimal.valueOf(money));
@@ -77,17 +91,17 @@ public class main extends JavaPlugin {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         Player player = (Player) sender;
 
-        if (cmd.getName().equalsIgnoreCase("auszahlen")) {
+        if (cmd.getName().equalsIgnoreCase("payout")) {
             config.setup();
             UUID uid = player.getUniqueId();
             int amount = config.playerspaidcfg.getInt(uid.toString());
             config.playerspaidcfg.set(uid.toString(), 0);
-            controlloop.removeItems(player.getInventory(), Material.DIAMOND, -1 * amount, player, true);
+            controlloop.removeItems(player.getInventory(), main.instance.currency, -1 * amount, player, true);
 
         }
         if (cmd.getName().equalsIgnoreCase("money") || cmd.getName().equalsIgnoreCase("balance")) {
-            player.sendMessage(ChatColor.GREEN + "Sie haben in ihrer Bank '" + ChatColor.RED + config.playerspaidcfg.getInt(player.getUniqueId().toString()) + ChatColor.GREEN + "' Diamanten. Buchen sie es jetzt mit /auszahlen ab");
-            player.sendMessage(ChatColor.GOLD + "Sie haben in ihrem Inventar '" + ChatColor.RED + Moneyhook.getMoney(player) + ChatColor.GOLD + "' Diamanten.");
+            player.sendMessage(ChatColor.GREEN + "You have on your account '" + ChatColor.RED + config.playerspaidcfg.getInt(player.getUniqueId().toString()) + ChatColor.GREEN + "' "+ main.instance.currency.toString() + ". You can collect the "+ main.instance.currency.toString() + " with the command /payout");
+            player.sendMessage(ChatColor.GOLD + "You have '" + ChatColor.RED + Moneyhook.getMoney(player) + ChatColor.GOLD + "' "+ main.instance.currency.toString() + " in your Inventory.");
 
         }
         return false;
@@ -95,7 +109,7 @@ public class main extends JavaPlugin {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args) {
-        if (cmd.getName().equalsIgnoreCase("auszahlen") || cmd.getName().equalsIgnoreCase("money") || cmd.getName().equalsIgnoreCase("balance")) {
+        if (cmd.getName().equalsIgnoreCase("payout") || cmd.getName().equalsIgnoreCase("money") || cmd.getName().equalsIgnoreCase("balance")) {
             ArrayList<String> entityTypes = new ArrayList<String>();
             return entityTypes;
 
@@ -103,6 +117,7 @@ public class main extends JavaPlugin {
 
         return null;
     }
+
 
 }
 

@@ -13,13 +13,15 @@ public class confighandler {
     public FileConfiguration playerspaidcfg;
     public File playerspaidfile;
     // --------------------------
-
+    public File configfile;
+    public FileConfiguration configfilecfg;
     public void setup()
     {
         if (!plugin.getDataFolder().exists()) {
             plugin.getDataFolder().mkdir();
         }
         playerspaidfile = new File(plugin.getDataFolder(), "playeroverpaid.yml");
+        configfile = new File(plugin.getDataFolder(), "config.yml");
         if (!playerspaidfile.exists()) {
             try {
                 playerspaidfile.createNewFile();
@@ -29,7 +31,17 @@ public class confighandler {
                         .sendMessage(ChatColor.RED + "Could not create the players.yml file");
             }
         }
+        if (!configfile.exists()) {
+            try {
+                configfile.createNewFile();
+                Bukkit.getServer().getConsoleSender().sendMessage(ChatColor.GREEN + "The config.yml file has been created");
+            } catch (IOException e) {
+                Bukkit.getServer().getConsoleSender()
+                        .sendMessage(ChatColor.RED + "Could not create the config.yml file");
+            }
+        }
         playerspaidcfg = YamlConfiguration.loadConfiguration(playerspaidfile);
+        configfilecfg = YamlConfiguration.loadConfiguration(configfile);
     }
     public void savePlayers() {
         try {

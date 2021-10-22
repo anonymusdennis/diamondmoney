@@ -79,15 +79,15 @@ public class MyPluginListener implements Listener {
         }
         BigDecimal bg = BigDecimal.valueOf(0);
         try {
-            bg = aa.subtract(Economy.getMoneyExact(uuid));
+            bg = aa.subtract(Economy.getMoneyExact(uuid).subtract(BigDecimal.valueOf(main.config.playerspaidcfg.getInt(uuid.toString()))));
         } catch (UserDoesNotExistException userDoesNotExistException) {
             userDoesNotExistException.printStackTrace();
         }
-        controlloop.removeItems(player.getInventory(), Material.DIAMOND,bg.intValueExact(),player,false);
+        controlloop.removeItems(player.getInventory(), main.instance.currency,main.task.get_bg_int_value(bg,true),player,false);
         int money = Moneyhook.getMoney(player);
         main.moneyhook.updatePlayermoney(player, money);
         int availmoney = main.config.playerspaidcfg.getInt(String.valueOf(uuid));
         if(availmoney > 0)
-            player.sendMessage(ChatColor.GREEN + "Du hast in deiner Bank " + availmoney + " Diamanten, hol sie dir jetzt ins inventar mit /auszahlen!");
+            player.sendMessage(ChatColor.GREEN + "On your account there are " + availmoney + " "+ main.instance.currency.toString() + "! Collect them with the Command /payout");
     }
 }

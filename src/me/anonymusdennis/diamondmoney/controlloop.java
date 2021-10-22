@@ -8,6 +8,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 public class controlloop {
@@ -16,10 +18,11 @@ public class controlloop {
         if(!main.recentmoneychangebyplugin) {
             UUID uuid = change.getPlayer().getUniqueId();
             try {
-                if (!main.playerMoneylist.get(uuid).equals(change.getNewBalance())) {
-                    BigDecimal bg = change.getOldBalance().subtract(change.getNewBalance());
-                    System.out.println("Booking $" + bg.intValueExact() * -1 + " on the player " + change.getPlayer().getName() + "'s account");
-                    removeItems(change.getPlayer().getInventory(), Material.DIAMOND, bg.intValueExact(), change.getPlayer(),false);
+                if (!(((BigDecimal)main.playerMoneylist.get(uuid)).add(BigDecimal.valueOf(main.config.playerspaidcfg.getInt(change.getPlayer().getUniqueId().toString())), new MathContext(34,RoundingMode.HALF_EVEN))).equals(change.getNewBalance())) {
+                    BigDecimal bg = change.getOldBalance().subtract(change.getNewBalance(), new MathContext(34,RoundingMode.HALF_EVEN));
+                    System.out.println(get_bg_int_value(bg,true));
+                    System.out.println("Booking $" + -get_bg_int_value(bg,true) + " on the player " + change.getPlayer().getName() + "'s account");
+                    removeItems(change.getPlayer().getInventory(), main.instance.currency, get_bg_int_value(bg,true), change.getPlayer(),false,true);
                     main.moneyhook.updatePlayermoney(change.getPlayer(), Moneyhook.getMoney(change.getPlayer()));
                 }
             } catch (NullPointerException e) {
@@ -27,7 +30,7 @@ public class controlloop {
             }
 
             int money = Moneyhook.getMoney(change.getPlayer());
-            if (money != change.getNewBalance().intValueExact())
+            if (money != get_bg_int_value(change.getNewBalance(),false))
                 main.moneyhook.updatePlayermoney(change.getPlayer(), money);
         }
     else {
@@ -35,7 +38,10 @@ public class controlloop {
         }
     }
     public static void removeItems(Inventory inventory, Material type, int amount,Player player,boolean toInventory) {
-
+        removeItems(inventory, type, amount, player, toInventory,false);
+    }
+    public static void removeItems(Inventory inventory, Material type, int amount,Player player,boolean toInventory, boolean fromStorage) {
+        System.out.println(amount);
         int size = inventory.getSize();
         if (amount >= 0) {
             for (int slot = 0; slot < size; slot++) {
@@ -53,6 +59,17 @@ public class controlloop {
                     if (amount == 0) break;
                 }
             }
+            if(amount > 0)
+            {
+                main.config.playerspaidcfg.set(player.getUniqueId().toString(), main.config.playerspaidcfg.getInt(player.getUniqueId().toString()) - amount);
+                System.out.println(main.config.playerspaidcfg.getInt(player.getUniqueId().toString()) + "were saved onto overpaid by functions");
+
+                try {
+                    main.config.playerspaidcfg.save(main.config.playerspaidfile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         if(amount < 0) {
 
@@ -66,16 +83,16 @@ public class controlloop {
                         continue;
                     if (amount >= 64) {
 
-                        is = new ItemStack(Material.DIAMOND, 64);
+                        is = new ItemStack(main.instance.currency, 64);
                         inventory.addItem(is);
                         amount -= 64;
                     } else {
-                        is = new ItemStack(Material.DIAMOND, amount);
+                        is = new ItemStack(main.instance.currency, amount);
                         inventory.addItem(is);
                         amount = 0;
                     }
 
-                } else if (is.getType().equals(Material.DIAMOND) && is.getAmount() < 64) {
+                } else if (is.getType().equals(main.instance.currency) && is.getAmount() < 64) {
                     if (amount >= 64 - is.getAmount()) {
                         amount -= 64 - is.getAmount();
                         is.setAmount(64);
@@ -99,5 +116,13 @@ public class controlloop {
                 System.out.println(main.config.playerspaidcfg.getInt(player.getUniqueId().toString()) + "were saved onto overpaid");
             }
         }
+    }
+    public int get_bg_int_value(BigDecimal bd, boolean round)
+    {
+        double bdd = bd.doubleValue();
+        System.out.println(bdd);
+        int bdi = (int) Math.round(bdd);
+        System.out.println(bdi);
+        return round ? bdi : bd.intValue();
     }
 }
