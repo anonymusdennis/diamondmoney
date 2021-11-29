@@ -61,7 +61,9 @@ public class main extends JavaPlugin {
         BukkitTask task = new BukkitRunnable() {
             public void run() {
                 Bukkit.getOnlinePlayers().forEach(player -> {
+                    System.out.println("momenten line 64");
                     moneyhook.updatePlayermoney(player, Moneyhook.getMoney(player));
+                    System.out.println(Moneyhook.getMoney(player));
                 });
             }
         }.runTaskTimer(this,0,5);

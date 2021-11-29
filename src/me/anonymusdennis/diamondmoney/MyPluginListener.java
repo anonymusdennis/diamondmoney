@@ -66,28 +66,17 @@ public class MyPluginListener implements Listener {
 
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent e){
 
         Player player = e.getPlayer();
         String pName = player.getName();
         UUID uuid = player.getUniqueId();
-        BigDecimal aa = (BigDecimal) main.playerlist.get(uuid);
-        if(aa == null)
-        {
-            aa = BigDecimal.valueOf(0);
-        }
-        BigDecimal bg = BigDecimal.valueOf(0);
-        try {
-            bg = aa.subtract(Economy.getMoneyExact(uuid).subtract(BigDecimal.valueOf(main.config.playerspaidcfg.getInt(uuid.toString()))));
-        } catch (UserDoesNotExistException userDoesNotExistException) {
-            userDoesNotExistException.printStackTrace();
-        }
-        controlloop.removeItems(player.getInventory(), main.instance.currency,main.task.get_bg_int_value(bg,true),player,false);
         int money = Moneyhook.getMoney(player);
         main.moneyhook.updatePlayermoney(player, money);
+        System.out.println("momenten line 92");
         int availmoney = main.config.playerspaidcfg.getInt(String.valueOf(uuid));
         if(availmoney > 0)
-            player.sendMessage(ChatColor.GREEN + "On your account there are " + availmoney + " "+ main.instance.currency.toString() + "! Collect them with the Command /payout");
+            player.sendMessage(ChatColor.GREEN + "On your account there are " + availmoney + " "+ main.instance.currency.toString() + "! Collect them with the Command /payout \n also you might have lost some money if you are buying items in your shop too");
     }
 }

@@ -23,6 +23,7 @@ public class controlloop {
                     System.out.println(get_bg_int_value(bg,true));
                     System.out.println("Booking $" + -get_bg_int_value(bg,true) + " on the player " + change.getPlayer().getName() + "'s account");
                     removeItems(change.getPlayer().getInventory(), main.instance.currency, get_bg_int_value(bg,true), change.getPlayer(),false,true);
+                    System.out.println("momenten line 26");
                     main.moneyhook.updatePlayermoney(change.getPlayer(), Moneyhook.getMoney(change.getPlayer()));
                 }
             } catch (NullPointerException e) {
@@ -31,7 +32,10 @@ public class controlloop {
 
             int money = Moneyhook.getMoney(change.getPlayer());
             if (money != get_bg_int_value(change.getNewBalance(),false))
+            {
                 main.moneyhook.updatePlayermoney(change.getPlayer(), money);
+                System.out.println("momenten line 37");
+            }
         }
     else {
         main.recentmoneychangebyplugin = false;
@@ -51,6 +55,7 @@ public class controlloop {
                     int newAmount = is.getAmount() - amount;
                     if (newAmount > 0) {
                         is.setAmount(newAmount);
+                        amount = 0;
                         break;
                     } else {
                         inventory.clear(slot);
@@ -71,6 +76,7 @@ public class controlloop {
                 }
             }
         }
+        else
         if(amount < 0) {
 
             amount = amount * -1;

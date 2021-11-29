@@ -18,31 +18,10 @@ import java.math.BigDecimal;
 public class Moneyhook {
 
     public void onInventorChanges(Inventory e, ItemStack itemStack, HumanEntity player) {
-        int amount = 0;
-        for (ItemStack item : e.getContents()) {
-            if (item == null)
-                amount += 0;
-            else if (item.getType() == main.instance.currency) {
-                amount += item.getAmount();
-            }
-        }
-        if (itemStack == null)
-            amount += 0;
-        else if (itemStack.getType() == main.instance.currency) {
-            amount += itemStack.getAmount();
-        }
+        int amount = getMoney((Player) player);
         main.instance.getLogger().info("player has " + amount + main.instance.currency.toString());
         updatePlayermoney((Player) player, amount);
-
-        try {
-            Economy.setMoney(player.getUniqueId(), BigDecimal.valueOf(amount));
-        } catch (NoLoanPermittedException noLoanPermittedException) {
-            noLoanPermittedException.printStackTrace();
-        } catch (UserDoesNotExistException userDoesNotExistException) {
-            userDoesNotExistException.printStackTrace();
-        } catch (MaxMoneyException maxMoneyException) {
-            maxMoneyException.printStackTrace();
-        }
+        System.out.println("momenten line 23");
     }
 
     public static int getMoney(Player player) {
@@ -65,6 +44,7 @@ public class Moneyhook {
         try {
             main.recentmoneychangebyplugin = true;
             Economy.setMoney(player.getUniqueId(), BigDecimal.valueOf(money + main.config.playerspaidcfg.getInt(player.getUniqueId().toString())));
+            System.out.println("momenten line 23:  " + BigDecimal.valueOf(money + main.config.playerspaidcfg.getInt(player.getUniqueId().toString())));
         } catch (NoLoanPermittedException noLoanPermittedException) {
             main.recentmoneychangebyplugin = false;
             noLoanPermittedException.printStackTrace();
